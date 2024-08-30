@@ -5,8 +5,9 @@ use Espo\Core\Exceptions\Error;
 use Espo\ORM\EntityManager;
 
 use Espo\Modules\{@name}\Classes\Constants;
+use Espo\Modules\{@name}\Classes\ConstantsDevelopment;
 
-class AfterInstall
+class AfterInstallDevelopment
 {
     private EntityManager $entityManager;
 

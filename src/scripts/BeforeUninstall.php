@@ -6,7 +6,7 @@ use Espo\ORM\EntityManager;
 
 use Espo\Modules\{@name}\Classes\Constants;
 
-class AfterInstall
+class BeforeUninstall
 {
     private EntityManager $entityManager;
 

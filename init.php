@@ -52,6 +52,16 @@ $replacePlaceholders('jsconfig.json');
 $replacePlaceholders('config-default.json');
 $replacePlaceholders('README.md');
 $replacePlaceholders('src/files/custom/Espo/Modules/MyModuleName/Resources/module.json');
+$replacePlaceholders('src/scripts/AfterInstall.php');
+$replacePlaceholders('src/scripts/AfterInstallDevelopment.php');
+$replacePlaceholders('src/scripts/AfterUninstall.php');
+$replacePlaceholders('src/scripts/AfterUninstallDevelopment.php');
+$replacePlaceholders('src/scripts/BeforeInstall.php');
+$replacePlaceholders('src/scripts/BeforeInstallDevelopment.php');
+$replacePlaceholders('src/scripts/BeforeUninstall.php');
+$replacePlaceholders('src/scripts/BeforeUninstallDevelopment.php');
+$replacePlaceholders('src/files/custom/Espo/Modules/MyModuleName/Classes/Constants.php');
+$replacePlaceholders('src/files/custom/Espo/Modules/MyModuleName/Classes/ConstantsDevelopment.php');
 
 if ($es6) {
     $content = <<<CLIENT_JSON

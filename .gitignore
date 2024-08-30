@@ -5,3 +5,5 @@
 /config.json
 /config.php
 /extensions/
+/package-lock.json
+/archive/

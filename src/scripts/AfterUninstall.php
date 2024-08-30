@@ -1,18 +1,21 @@
 <?php
 
+use Espo\Core\Container;
+use Espo\Core\Exceptions\Error;
+use Espo\ORM\EntityManager;
+
+use Espo\Modules\{@name}\Classes\Constants;
+
 class AfterUninstall
 {
-    protected $container;
+    private EntityManager $entityManager;
 
-    public function run($container)
+    public function __construct(Container $container)
     {
-        $this->container = $container;
+        $this->entityManager = $container->get("entityManager");
     }
 
-    protected function clearCache()
+    public function run(): void
     {
-        try {
-            $this->container->get('dataManager')->clearCache();
-        } catch (\Exception $e) {}
     }
 }

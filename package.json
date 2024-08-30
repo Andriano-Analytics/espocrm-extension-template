@@ -1,18 +1,20 @@
 {
-  "name": "espocrm-ext-{@nameHyphen}",
-  "version": "0.0.1",
-  "description": "",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "type": "module",
-  "author": "{@author}",
-  "dependencies": {
-    "espo-extension-tools": "github:espocrm/extension-tools#0.1.5",
-    "fs-extra": "^9.0.0"
-  },
-  "engines": {
-    "npm": ">=7",
-    "node": ">=15"
-  }
+    "name": "espocrm-ext-{@nameHyphen}",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "clean": "rm -rf node_modules build site"
+    },
+    "type": "module",
+    "author": "",
+    "dependencies": {
+        "espo-extension-tools-original": "github:espocrm/extension-tools#0.1.5",
+        "espo-extension-tools-custom": "github:bandtank/espocrm-extension-tools#v1.0.0",
+        "fs-extra": "^9.0.0"
+    },
+    "engines": {
+        "npm": ">=7",
+        "node": ">=15"
+    }
 }
