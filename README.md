@@ -166,7 +166,7 @@ Build the extension using the custom build script to ignore the development scri
 node buildc --extension
 ```
 The original build script will not ignore the default development files. The list of default development files is as follows:
-```json
+```
 src/scripts/AfterInstallDevelopment.php
 src/scripts/AfterUninstallDevelopment.php
 src/scripts/BeforeInstallDevelopment.php
