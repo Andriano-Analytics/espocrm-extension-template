@@ -23,16 +23,16 @@ class BeforeInstall
     }
 
     private function isInstallAllowed(): bool {
-        $error = False;
+        $allowed = True;
 
         foreach(Constants::REQUIRED_EXTENSIONS as $extension) {
-            $count = $this->em->getRDBRepository(Extension::ENTITY_TYPE)->where(["name" => $extension])->count();
+            $count = $this->entityManager->getRDBRepository(Extension::ENTITY_TYPE)->where(["name" => $extension])->count();
             if($count != 1) {
                 $GLOBALS["log"]->error("Missing extension", [$extension]);
-                $error = True;
+                $allowed = False;
             }
         }
 
-        return $error;
+        return $allowed;
     }
 }
