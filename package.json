@@ -7,9 +7,9 @@
         "clean": "rm -rf node_modules build site"
     },
     "type": "module",
-    "author": "",
+    "author": "{@author}",
     "dependencies": {
-        "espo-extension-tools-original": "github:espocrm/extension-tools#0.1.5",
+        "espo-extension-tools-original": "github:espocrm/extension-tools#0.1.6",
         "espo-extension-tools-custom": "github:bandtank/espocrm-extension-tools#v1.0.0",
         "fs-extra": "^9.0.0"
     },
