@@ -1,5 +1,5 @@
 {
-    "name": "espocrm-ext-{@nameHyphen}",
+    "name": "espocrm-extension-{@nameHyphen}",
     "version": "1.0.0",
     "description": "",
     "scripts": {
@@ -14,7 +14,7 @@
         "fs-extra": "^9.0.0"
     },
     "engines": {
-        "npm": ">=7",
-        "node": ">=15"
+        "npm": ">=10",
+        "node": ">=22"
     }
 }
