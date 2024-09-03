@@ -33,31 +33,12 @@ The new commandline switches are as follows:
 * `--local`                      Use with any fetch command (`--all`, `--update-archive`, etc.) to use a local version of the repository instead of downloading it
 * `--update-archive`             Download and store the latest version of Espo in the given branch for reuse
 
-### Development Packages in Composer
-The original repository does _not_ allow composer to install development packages. The custom repository _does_ allow development packages to be installed with composer. For example, `fzaninotto/Faker` allows the PHP scripts to generate fake data, which is helpful for testing. However, `fzaninotto/Faker` most likely should not be installed by the extension on a production system. To add development dependencies, add the following to the `composer.json` file in your module's code:
-
-`src/files/custom/Espo/Modules/<ModuleName>/composer.json`:
-```json
-{
-    "require-dev": {
-        "fakerphp/faker": "^1.23"
-    }
-}
-```
-`src/files/custom/Espo/Modules/<ModuleName>/Resources/autoload.json`:
-```json
-{
-    "psr-4": {
-        "Faker\\": "custom/Espo/Modules/<ModuleName>/vendor/faker/src/Faker/"
-    }
-}
-```
 
 ### Example Workflows
-* `node build --all [--db-reset] [--local]`
-* `node build --fetch --local; node build --install`
-* `node build --copy`
-* `node build --copy; node build --composer-install`
+* `node buildc --all [--db-reset] [--local]`
+* `node buildc --fetch --local; node buildc --install`
+* `node buildc --copy`
+* `node buildc --copy; node buildc --composer-install`
 
 ### Development Scripts
 The espocrm-extension-template repository defines several files which are meant to be used for development purposes only. This repository is configured to ignore the development-only files when building the extension package. Here is the list of ignored files:
@@ -106,17 +87,25 @@ Parameters:
 * install.defaultOwner - a webserver owner (important to be set right);
 * install.defaultGroup - a webserver group (important to be set right).
 
+## Create the database
+
+Create the databse manually or using `node buildc --db-reset`.
 
 ## Config for EspoCRM instance
 
-You can override EspoCRM config. Create `config.php` in the root directory of the repository. This file will be applied after EspoCRM intallation (when building).
+You can override EspoCRM config. Create `config.php` in the root directory of the repository. This file will be applied after EspoCRM installation (when building).
 
 Example:
 
 ```php
 <?php
 return [
-    'useCacheInDeveloperMode' => true,
+    'useCache' => False,
+    'useCacheInDeveloperMode' => False,
+    'isDeveloperMode' => True,
+    'logger' => [
+      'level' => 'DEBUG',
+    ],
 ];
 ```
 
@@ -135,17 +124,18 @@ After building, EspoCRM instance with installed extension will be available at `
 
 ### Full EspoCRM instance building
 
-It will download EspoCRM (from the repository specified in the config), then build and install it. Then it will install the extension.
-
-Command:
+Download the latest release of EspoCRM:
 
 ```
-node build --all
+node buildc --update-archive
 ```
 
-Note: It will remove a previously installed EspoCRM instance, but keep the database intact.
+Build and install the application and extension using the local archive of EspoCRM:
+```
+node buildc --all --local
+```
 
-Note: If an error occurred, check `site/data/logs/` for details. It's often a database is not created.
+The `--all` switch will remove previous builds in `site/`, but the database will not be modified. If you want to reset the database, use the `--db-reset` switch as well. If errors occur during installation, check EspoCRM's application log files in `site/data/logs/`. It is also useful to check the webserver's log files in some situations.
 
 ### Copying extension files to EspoCRM instance
 
@@ -154,32 +144,36 @@ You need to run this command every time you make changes in `src` directory and 
 Command:
 
 ```
-node build --copy
+node buildc --copy
 ```
 
 You can set up a file watcher in your IDE to avoid running this command manually. See below about the file watcher.
 
-### Running after-install script
-
-AfterInstall.php will be applied for EspoCRM instance.
-
-Command:
-
+### Running the before-install script
+BeforeInstall.php will be executed against the EspoCRM installation in `site/` by running the following command:
 ```
-node build --after-install
+node buildc --before-install
 ```
 
+### Running the after-install script
+AfterInstall.php will be executed against the EspoCRM installation in `site/` by running the following command:
+```
+node buildc --after-install
+```
 ### Extension package building
-
-Command:
-
+Build the extension using the custom build script to ignore the development scripts and classes:
 ```
-node build --extension
+node buildc --extension
 ```
-
-The package will be created in `build` directory.
-
-Note: The version number is taken from `package.json`.
+The original build script will not ignore the default development files. The list of default development files is as follows:
+```json
+src/scripts/AfterInstallDevelopment.php
+src/scripts/AfterUninstallDevelopment.php
+src/scripts/BeforeInstallDevelopment.php
+src/scripts/BeforeUninstallDevelopment.php
+src/files/custom/Espo/Modules/MyModuleName/Classes/ConstantsDevelopment.php
+```
+The package will be created in `build/` using the version number in `package.json`.
 
 ### Installing addition extensions
 
@@ -200,13 +194,24 @@ return [
 2. Create the `extensions` directory in the root directory of your repository.
 3. Put needed extensions (e.g. `my-extension-1.0.0.zip`) in this directory.
 
-Extensions will be installed automatically after running the command `node build --all` or `node build --install`.
+Extensions will be installed automatically after running the command `node buildc --all` or `node buildc --install`.
 
 ## Development workflow
-
-1. Do development in `src` dir.
-2. Run `node build --copy`.
-3. Test changes in EspoCRM instance at `site` dir.
+1. Develop the extension in `src/`
+2. Run:
+    * `node buildc --copy` to:
+      * Copy the extension to `site/`
+      * Set file and folder ownership
+    * `node buildc --copy-to-end` to run:
+      * Copy the extension to `site/`
+      * Run the BeforeInstall scripts (production then development)
+      * Run composer install (including development packages)
+      * Rebuild the EspoCRM instance
+      * Run the AfterInstall scripts (production then development)
+      * Set file and folder ownership
+3. Test the changes in the application:
+    * GUI - Visit the site in a browser (`site/` is the application's root folder)
+    * API - Query the instance using HTTP requests
 
 ## Using entity manager to create entities
 
@@ -215,7 +220,7 @@ You can block out new entity types right in Espo (using Entity Manager) and then
 1. Create entity types, fields, layouts, relationships in Espo (it should be available in `site` dir after building).
 2. Run `node copy-custom.js`. It will copy all files from `site/custom` to `src/files/custom/Espo/Modules/{ModuleName}` and apply needed modifications to files.
 3. Remove files from `site/custom`.
-4. Run `node build --copy`. It will copy files from the repository to Espo build (`site/custom//Espo/Modules/{ModuleName}` dir).
+4. Run `node buildc --copy`. It will copy files from the repository to Espo build (`site/custom//Espo/Modules/{ModuleName}` dir).
 5. Clear cache in Espo.
 6. Test in Espo.
 7. Commit changes.
@@ -223,13 +228,13 @@ You can block out new entity types right in Espo (using Entity Manager) and then
 
 You can remove `copy-custom.js` from the repository if you don't plan to use it future.
 
-## Using composer in extension
+## Using composer in the extension
 
-If your extension requires additional libraries, they can be installed by composer:
+If your extension requires additional libraries, the libraries can be installed by composer:
 
-1. Create a file `src/files/custom/Espo/Modules/{ModuleName}/composer.json` with your dependencies.
-2. Once you run `node build --all` or `node build --composer-install`, composer dependencies will be automatically installed.
-3. Create a file `src/files/custom/Espo/Modules/{ModuleName}/Resources/autoload.json`.
+1. Create a file: `src/files/custom/Espo/Modules/{ModuleName}/composer.json`
+2. Run `node buildc --all` or `node buildc --composer-install` to run `composer install`. The dependencies in the new `composer.json` file will be installed automatically.
+3. Create a file: `src/files/custom/Espo/Modules/{ModuleName}/Resources/autoload.json`
 
 Note: The extension build will contain only the `vendor` directory without the `composer.json` file.
 
@@ -243,6 +248,26 @@ The `autoload.json` file defines paths for namespaces:
 }
 ```
 
+
+### Development Packages
+The original repository does _not_ allow composer to install development packages. The custom repository _does_ allow development packages to be installed with composer. For example, `fzaninotto/Faker` allows PHP scripts to generate fake data, which is helpful for testing. However, `fzaninotto/Faker` most likely should not be installed by the extension on a production system. To add development dependencies, add the following to the `composer.json` file in your module's code:
+
+`src/files/custom/Espo/Modules/{ModuleName}/composer.json`:
+```json
+{
+    "require-dev": {
+        "fakerphp/faker": "^1.23"
+    }
+}
+```
+`src/files/custom/Espo/Modules/{ModuleName}/Resources/autoload.json`:
+```json
+{
+    "psr-4": {
+        "Faker\\": "custom/Espo/Modules/{ModuleName}/vendor/faker/src/Faker/"
+    }
+}
+```
 ## Versioning
 
 The version number is stored in `package.json` and `package-lock.json`.
@@ -268,14 +293,14 @@ Run composer install:
 Command to run unit tests:
 
 ```
-node build --copy; site/vendor/bin/phpunit site/tests/unit/Espo/Modules/{@name}
+node buildc --copy; site/vendor/bin/phpunit site/tests/unit/Espo/Modules/EntraSSO
 ```
 
 ### Integration
 
 You need to build a test instance first:
 
-1. `node build --copy`
+1. `node buildc --copy`
 2. `(cd site; grunt test)`
 
 You need to create a config file `tests/integration/config.php`:
@@ -295,12 +320,12 @@ return [
 ];
 ```
 
-The file should exist before you run `node build --copy`.
+The file should exist before you run `node buildc --copy`.
 
 Command to run integration tests:
 
 ```
-(cd site && vendor/bin/phpunit tests/integration/Espo/Modules/{@name})
+(cd site && vendor/bin/phpunit tests/integration/Espo/Modules/EntraSSO)
 ```
 
 ## Configuring IDE
@@ -311,8 +336,8 @@ You need to set the following paths to be ignored in your IDE:
 * `site/build`
 * `site/custom/`
 * `site/client/custom/`
-* `site/tests/unit/Espo/Modules/{@name}`
-* `site/tests/integration/Espo/Modules/{@name}`
+* `site/tests/unit/Espo/Modules/EntraSSO`
+* `site/tests/integration/Espo/Modules/EntraSSO`
 
 ### File watcher
 
@@ -321,7 +346,7 @@ You can set up a file watcher in the IDE to automatically copy and transpile fil
 File watcher parameters for PhpStorm:
 
 * Program: `node`
-* Arguments: `build --copy-file --file=$FilePathRelativeToProjectRoot$`
+* Arguments: `buildc --copy-file --file=$FilePathRelativeToProjectRoot$`
 * Working Directory: `$ProjectFileDir$`
 
 ## Using ES modules
@@ -331,13 +356,13 @@ File watcher parameters for PhpStorm:
 The initialization script asks whether you want to use ES6 modules. If you choose "NO", you still can switch to ES6 later:
 
 1. Set *bundled* to true in `extension.json`.
-2. Set *bundled* and *jsTranspiled* to true in `src/files/custom/Espo/Modules/{@name}/Resources/module.json`.
-3. Add `src/files/custom/Espo/Modules/{@name}/Resources/metadata/app/client.json`
+2. Set *bundled* and *jsTranspiled* to true in `src/files/custom/Espo/Modules/EntraSSO/Resources/module.json`.
+3. Add `src/files/custom/Espo/Modules/EntraSSO/Resources/metadata/app/client.json`
     ```json
     {
         "scriptList": [
             "__APPEND__",
-            "client/custom/modules/{@nameHyphen}/lib/init.js"
+            "client/custom/modules/entra-s-s-o/lib/init.js"
         ]
     }
     ```
