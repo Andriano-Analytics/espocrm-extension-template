@@ -30,8 +30,7 @@ The new commandline switches are as follows:
 * `--before-install`             Run only the beforeInstall process for the extension
 * `--copy-to-end`                Run the `all` switch from the `copy` step until the end
 * `--db-reset`                   Create (or drop and recreate) the database schema (only the schema, no tables)
-* `--extension`                  Build the extension for distribution
-* `--rebuild`                    Rebuild Espo's configuration (CLI version of UI->Administration->Rebuild)
+* `--local`                      Use with any fetch command (`--all`, `--update-archive`, etc.) to use a local version of the repository instead of downloading it
 * `--update-archive`             Download and store the latest version of Espo in the given branch for reuse
 
 ### Development Packages in Composer
