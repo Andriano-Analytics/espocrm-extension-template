@@ -62,6 +62,12 @@ $replacePlaceholders('src/scripts/BeforeUninstall.php');
 $replacePlaceholders('src/scripts/BeforeUninstallDevelopment.php');
 $replacePlaceholders('src/files/custom/Espo/Modules/MyModuleName/Classes/Constants.php');
 $replacePlaceholders('src/files/custom/Espo/Modules/MyModuleName/Classes/ConstantsDevelopment.php');
+$replacePlaceholders('src/files/custom/Espo/Modules/MyModuleName/Jobs/Sandbox.php');
+$replacePlaceholders('src/files/custom/Espo/Modules/MyModuleName/Jobs/SandboxScheduled.php');
+$replacePlaceholders('src/files/custom/Espo/Modules/MyModuleName/Resources/i18n/en_US/Global.json');
+$replacePlaceholders('src/files/custom/Espo/Modules/MyModuleName/Resources/i18n/en_US/ScheduledJob.json');
+$replacePlaceholders('src/files/custom/Espo/Modules/MyModuleName/Resources/metadata/app/scheduledJobs.json');
+$replacePlaceholders('src/files/custom/Espo/Modules/MyModuleName/Resources/autoload.json');
 
 if ($es6) {
     $content = <<<CLIENT_JSON
