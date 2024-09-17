@@ -59,8 +59,8 @@ This repository includes two files that are meant to allow global constants to b
 
 The development scripts (for example, `BeforeInstallDevelopment.php`) automatically include the appropriate files, and the build script automatically excludes the appropriate files.
 
-## Pro Developer Tools
-Use the "Pro Developer Tools" extension to add much-needed functionality during extension development:
+## Extension Tools Pro
+Use the "Extension Tools Pro" extension to add much-needed functionality during extension development:
 * Fake Data - Quickly populate the EspoCRM instance with fake data
 * Sandbox Jobs - Create jobs to easily execute functions automatically and manually
 
