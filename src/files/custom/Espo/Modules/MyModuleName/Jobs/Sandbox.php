@@ -6,7 +6,7 @@ use Espo\Core\Job\JobDataLess;
 use Espo\Core\Utils\Log;
 use Espo\ORM\EntityManager;
 
-class SandboxDevelopment implements JobDataLess
+class Sandbox implements JobDataLess
 {
     public function __construct(
         private EntityManager $entityManager,
