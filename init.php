@@ -24,12 +24,9 @@ $fh = fopen('php://stdin', 'r');
 $author = trim(fgets($fh));
 fclose($fh);
 
-fwrite(\STDOUT, "Do you want to use ES6 modules in frontend? [y/n]\n");
-$fh = fopen('php://stdin', 'r');
-$es6 = trim(fgets($fh)) === 'y';
-$bundled = $es6 ? "true" : "false";
-$jsTranspiled = $es6 ? "true" : "false";
-fclose($fh);
+//All front-end code is forced to be written in es6
+$bundled = "true";
+$jsTranspiled = "true";
 
 $replacePlaceholders = function (string $file) use ($name, $nameHyphen, $nameLabel, $description, $author, $bundled, $jsTranspiled)
 {
@@ -68,25 +65,7 @@ $replacePlaceholders('src/files/custom/Espo/Modules/MyModuleName/Resources/i18n/
 $replacePlaceholders('src/files/custom/Espo/Modules/MyModuleName/Resources/i18n/en_US/ScheduledJob.json');
 $replacePlaceholders('src/files/custom/Espo/Modules/MyModuleName/Resources/metadata/app/scheduledJobs.json');
 $replacePlaceholders('src/files/custom/Espo/Modules/MyModuleName/Resources/autoload.json');
-
-if ($es6) {
-    $content = <<<CLIENT_JSON
-{
-  "scriptList": [
-      "__APPEND__",
-      "client/custom/modules/{@nameHyphen}/lib/init.js"
-  ]
-}
-CLIENT_JSON;
-
-    $path = 'src/files/custom/Espo/Modules/MyModuleName/Resources/metadata/app/';
-    mkdir($path, 0755, true);
-
-    $path .= "client.json";
-    file_put_contents($path, $content);
-
-    $replacePlaceholders($path);
-}
+$replacePlaceholders('src/files/custom/Espo/Modules/MyModuleName/Resources/metadata/app/client.json');
 
 rename('src/files/custom/Espo/Modules/MyModuleName', 'src/files/custom/Espo/Modules/'. $name);
 rename('src/files/client/custom/modules/my-module-name', 'src/files/client/custom/modules/'. $nameHyphen);
