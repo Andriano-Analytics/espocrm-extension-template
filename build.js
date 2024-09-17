@@ -1,3 +1,3 @@
-import {buildGeneral} from 'espo-extension-tools-original';
+import {buildGeneral} from 'espo-extension-tools-custom';
 
 buildGeneral();

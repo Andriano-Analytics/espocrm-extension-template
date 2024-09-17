@@ -1,6 +1,6 @@
 {
     "name": "espocrm-extension-{@nameHyphen}",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "description": "",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,7 +9,7 @@
     "type": "module",
     "author": "{@author}",
     "dependencies": {
-        "espo-extension-tools-original": "github:espocrm/extension-tools#0.1.6",
+        "espo-extension-tools-original": "github:espocrm/extension-tools#0.1.9",
         "espo-extension-tools-custom": "github:bandtank/espocrm-extension-tools#v1.0.0",
         "fs-extra": "^9.0.0"
     },
