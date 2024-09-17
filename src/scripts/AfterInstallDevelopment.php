@@ -5,6 +5,7 @@ use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Log;
 use Espo\Core\Utils\Metadata;
 use Espo\ORM\EntityManager;
+use Espo\Entities\ScheduledJob;
 
 use Espo\Modules\{@name}\Classes\Constants;
 use Espo\Modules\{@name}\Classes\ConstantsDevelopment;
@@ -24,5 +25,24 @@ class AfterInstallDevelopment
 
     public function run(): void
     {
+        $this->createJobs();
+    }
+
+    private function createJobs(): void
+    {
+        $job = $this->entityManager->getRDBRepository(ScheduledJob::ENTITY_TYPE)
+            ->where(array('job' => 'SandboxScheduled'))->findOne();
+
+        if (!$job)
+            $job = $this->entityManager->newEntity(ScheduledJob::ENTITY_TYPE);
+
+        $job->set(array(
+            'name' => "[{@nameLabel}]: Sandbox (Scheduled)",
+            'job' => 'SandboxScheduled',
+            'status' => "Inactive",
+            'scheduling' => '*/5 * * * *',
+        ));
+
+        $this->entityManager->saveEntity($job);
     }
 }

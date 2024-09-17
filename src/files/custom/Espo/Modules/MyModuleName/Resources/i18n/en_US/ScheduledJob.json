@@ -1,0 +1,8 @@
+{
+    "options": {
+        "job": {
+            "SandboxScheduled": "[{@nameLabel}] Sandbox (Scheduled)",
+            "Sandbox": "[{@nameLabel}] Sandbox (Manual)"
+        }
+    }
+}

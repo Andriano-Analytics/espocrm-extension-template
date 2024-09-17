@@ -43,11 +43,13 @@ The new commandline switches are as follows:
 ### Development Scripts
 The espocrm-extension-template repository defines several files which are meant to be used for development purposes only. The custom build script ignores the development-only files when building the extension package. Here is the list of ignored files:
 ```
-/src/files/custom/Espo/Modules/{@name}/Classes/ConstantsDevelopment.php
-/src/scripts/AfterInstallDevelopment.php
-/src/scripts/AfterUninstallDevelopment.php
-/src/scripts/BeforeInstallDevelopment.php
-/src/scripts/BeforeUninstallDevelopment.php
+src/scripts/AfterInstallDevelopment.php
+src/scripts/AfterUninstallDevelopment.php
+src/scripts/BeforeInstallDevelopment.php
+src/scripts/BeforeUninstallDevelopment.php
+src/files/custom/Espo/Modules/{@name}/Classes/ConstantsDevelopment.php
+src/files/custom/Espo/Modules/{@name}/Jobs/Sandbox.php
+src/files/custom/Espo/Modules/{@name}/Jobs/SandboxScheduled.php
 ```
 
 ### Constants
@@ -56,6 +58,19 @@ This repository includes two files that are meant to allow global constants to b
 * `src/files/custom/Espo/Modules/{@name}/Class/ConstantsDevelopment.php`
 
 The development scripts (for example, `BeforeInstallDevelopment.php`) automatically include the appropriate files, and the build script automatically excludes the appropriate files.
+
+### Fake Data
+To quickly add fake data, install the extension called "Fake Data for EspoCRM Development", which his available here.
+
+### Sandbox Jobs
+This repository includes two jobs that allow developers to write code in sandboxes. The details of each job are as follows:
+* Sandbox - Intended to be run manually (see below)
+* SandboxScheduled - Intended to be run automatically. A scheduled job is installed by the `AfterInstallDevelopment.php` script, which can be managed in `Administration -> Scheduled Jobs`. It is disabled by default.
+
+`Sandbox` is intended to be run manually using the following command from the project's root folder:
+```bash
+site/bin/command run-job Sandbox
+```
 
 ## Preparing repository
 Run:
@@ -125,6 +140,12 @@ node buildc --copy
 ```
 Optionally, a file watcher may be configured to run the `--copy` command automatically. See a later section to learn more about file watchers.
 
+Note: Running this command removes the `vendor` folder in `custom/Espo/Modules/{@name}/vendor`. You must run:
+```
+node buildc --composer-install
+```
+to regenerate the `vendor` folder.
+
 ### Running the before-install scripts
 `BeforeInstall.php` and `BeforeInstallDevelopment.php` will be executed against the EspoCRM installation in `site/` by running the following command:
 ```
@@ -141,15 +162,9 @@ Build the extension using the custom build script to ignore the development scri
 ```
 node buildc --extension
 ```
-The original build script will not ignore the default development files. The list of default development files is as follows:
-```
-src/scripts/AfterInstallDevelopment.php
-src/scripts/AfterUninstallDevelopment.php
-src/scripts/BeforeInstallDevelopment.php
-src/scripts/BeforeUninstallDevelopment.php
-src/files/custom/Espo/Modules/{@name}/Classes/ConstantsDevelopment.php
-```
 The package will be created in `build/` using the version number in `package.json`.
+
+Note: The original build script will not ignore the default development files.
 
 ### Installing addition extensions
 To install other extensions during the build process, follow the steps below:
@@ -173,6 +188,7 @@ Extensions will be installed automatically after running the command `node build
     * `node buildc --copy` to:
       * Copy the extension to `site/`
       * Set file and folder ownership
+      * Optionally: `node buildc --composer-install` to reinstall vendor packages
     * `node buildc --copy-to-end` to run:
       * Copy the extension to `site/`
       * Run the BeforeInstall scripts (production then development)
@@ -214,7 +230,7 @@ The `autoload.json` file defines paths for namespaces:
 ```json
 {
     "psr-4": {
-        "LibraryNamespace\\": "custom/Espo/Modules/{@name}/vendor/<vendor-name>/<library-name>/path/to/src"
+        "{LibraryNamespace}\\{MoreNamespace}\\": "custom/Espo/Modules/{@name}/vendor/<vendor-name>/<library-name>/path/to/src"
     }
 }
 ```
