@@ -1,0 +1,11 @@
+{
+    "scopeNames": {
+        "{@name}": "{@nameLabel}"
+    },
+    "scopeNamesPlural": {
+        "{@name}": "{@nameLabel}"
+    },
+    "dashlets": {
+        "{@name}": "{@nameLabel}"
+    }
+}
