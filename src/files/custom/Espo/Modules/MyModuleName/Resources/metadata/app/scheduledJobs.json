@@ -1,8 +1,0 @@
-{
-    "SandboxScheduled": {
-        "jobClassName": "Espo\\Modules\\{@name}\\Jobs\\SandboxScheduled"
-    },
-    "Sandbox": {
-        "jobClassName": "Espo\\Modules\\{@name}\\Jobs\\Sandbox"
-    }
-}

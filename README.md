@@ -6,7 +6,7 @@ This repository is a fork of the espocrm/ext-template repository. It has two ope
 
 Regular mode has the same behavior as the original repository. Custom mode introduces many new features that make template development faster and easier in many situations. It is assumed you will always use the custom build script, which is why this file uses `node build` in all instructions.
 
-### Custom Extension Tools
+## Custom Extension Tools
 This repository uses bandtank/espocrm-extension-tools, which is based on espocrm/extension-tools. The enhancements provided by the custom tools repository speed up development in some situations, such as:
 * Dropping and recreating the database to start fresh
 * Running the sequence of steps from the `all` flag starting at `copy` until the end
@@ -35,14 +35,14 @@ The new commandline switches are as follows:
 * `--local`                      Use with any fetch command (`--all`, `--update-archive`, etc.) to use a local version of the repository instead of downloading it
 * `--update-archive`             Download and store the latest version of Espo in the given branch for reuse
 
-
-### Example Workflows
+## Example Workflows
+* `npm run clean && npm install && node build --all --local --db-reset`
 * `node build --all [--db-reset] [--local]`
 * `node build --fetch --local; node build --install`
 * `node build --copy`
 * `node build --copy; node build --composer-install`
 
-### Development Scripts
+## Development Scripts
 The espocrm-extension-template repository defines several files which are meant to be used for development purposes only. The custom build script ignores the development-only files when building the extension package. Here is the list of ignored files:
 ```
 src/scripts/AfterInstallDevelopment.php
@@ -50,31 +50,21 @@ src/scripts/AfterUninstallDevelopment.php
 src/scripts/BeforeInstallDevelopment.php
 src/scripts/BeforeUninstallDevelopment.php
 src/files/custom/Espo/Modules/{@name}/Classes/ConstantsDevelopment.php
-src/files/custom/Espo/Modules/{@name}/Jobs/Sandbox.php
-src/files/custom/Espo/Modules/{@name}/Jobs/SandboxScheduled.php
 ```
 
-### Constants
+## Constants
 This repository includes two files that are meant to allow global constants to be used throughout the module:
 * `src/files/custom/Espo/Modules/{@name}/Class/Constants.php`
 * `src/files/custom/Espo/Modules/{@name}/Class/ConstantsDevelopment.php`
 
 The development scripts (for example, `BeforeInstallDevelopment.php`) automatically include the appropriate files, and the build script automatically excludes the appropriate files.
 
-### Fake Data
-To quickly add fake data, install the extension called "Fake Data for EspoCRM Development", which his available here.
+## Pro Developer Tools
+Use the "Pro Developer Tools" extension to add much-needed functionality during extension development:
+* Fake Data - Quickly populate the EspoCRM instance with fake data
+* Sandbox Jobs - Create jobs to easily execute functions automatically and manually
 
-### Sandbox Jobs
-This repository includes two jobs that allow developers to write code in sandboxes. The details of each job are as follows:
-* Sandbox - Intended to be run manually (see below)
-* SandboxScheduled - Intended to be run automatically. A scheduled job is installed by the `AfterInstallDevelopment.php` script, which can be managed in `Administration -> Scheduled Jobs`. It is disabled by default.
-
-`Sandbox` is intended to be run manually using the following command from the project's root folder:
-```bash
-site/bin/command run-job Sandbox
-```
-
-## Preparing repository
+# Preparing repository
 Run:
 ```
 php init.php
@@ -222,29 +212,33 @@ You can remove `copy-custom.js` from the repository if you don't plan to use it 
 
 If your extension requires additional libraries, the libraries can be installed by composer:
 
-1. Create a file: `src/files/custom/Espo/Modules/{@name}/composer.json`
-2. Run `node build --all` or `node build --composer-install` to run `composer install`. The dependencies in the new `composer.json` file will be installed automatically.
-3. Create a file: `src/files/custom/Espo/Modules/{@name}/Resources/autoload.json`
-
-Note: The extension build will contain only the `vendor` directory without the `composer.json` file.
-
-The `autoload.json` file defines paths for namespaces:
-
-```json
-{
-    "psr-4": {
-        "{LibraryNamespace}\\{MoreNamespace}\\": "custom/Espo/Modules/{@name}/vendor/<vendor-name>/<library-name>/path/to/src"
+1. Create a file: `src/files/custom/Espo/Modules/{@name}/composer.json` with the following structure:
+    ```json
+    {
+        "require": {
+            "{library/namespace}": "{version}"
+        }
     }
-}
-```
+    ```
+   The `composer.json` file defines a list of required libraries that will be installed with the extension. **Note: The final build will contain only the `vendor` directory without the `composer.json` file.**
+2. Run `node build --all` or `node build --composer-install` to run `composer install`. The dependencies in the new `composer.json` file will be installed automatically.
+3. Create a file: `src/files/custom/Espo/Modules/{@name}/Resources/autoload.json` with the following structure:
+    ```json
+    {
+        "psr-4": {
+            "{LibraryNamespace\\MoreNamespace}\\": "custom/Espo/Modules/{@name}/vendor/<vendor-name>/<library-name>/path/to/src"
+        }
+    }
+    ```
+    The `autoload.json` file defines paths for namespaces in PHP.
 
-### Development Packages
-The original repository does _not_ allow composer to install development packages. The custom repository _does_ allow development packages to be installed with composer. For example, `fzaninotto/Faker` allows PHP scripts to generate fake data, which is helpful for testing. However, `fzaninotto/Faker` most likely should not be installed by the extension on a production system. To add development dependencies, add the following to the `composer.json` file in your module's code:
+### Example:
+To use the [fzaninotto/Faker](https://github.com/fzaninotto/Faker) library, update the following files accordingly:
 
 `src/files/custom/Espo/Modules/{@name}/composer.json`:
 ```json
 {
-    "require-dev": {
+    "require": {
         "fakerphp/faker": "^1.23"
     }
 }
@@ -257,6 +251,26 @@ The original repository does _not_ allow composer to install development package
     }
 }
 ```
+Run `node build --composer-install`. You can now use the library in PHP; e.g.:
+```php
+use Faker\Generator;
+```
+
+## Using composer to install development packages
+The original repository does _not_ allow composer to install development packages. The custom repository _does_ allow development packages to be installed with composer. In the `composer.json` file, add libraries to `require-dev` instead of `require` to tell the build system to install the libraries during development only. The production build process will ignore the libraries in `require-dev`. However, the production build process will **not** ignore the entries in `autoload.json`, so be aware of what you are adding to the project. In many cases, development libraries are better to add with a custom extension that is only intended to be used for the development of other extensions.
+
+For example, [fzaninotto/Faker](https://github.com/fzaninotto/Faker) allows PHP scripts to generate fake data, which is helpful for testing. To make the library available only for development, change the previously created `composer.json` as follows:
+
+```json
+{
+    "require-dev": {
+        "fakerphp/faker": "^1.23"
+    }
+}
+```
+The `autoload.json` needs to have the same `psr-4` definition, which means the namespace will be available in the final build of the extension even if the library is only available during development.
+`src/files/custom/Espo/Modules/{@name}/Resources/autoload.json`:
+
 ## Versioning
 
 The version number is stored in `package.json` and `package-lock.json`.
