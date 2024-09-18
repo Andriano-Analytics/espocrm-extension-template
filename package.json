@@ -4,7 +4,9 @@
     "description": "",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "clean": "rm -rf node_modules build site"
+        "clean": "rm -rf node_modules build site",
+        "full-reset": "npm run clean && npm install && node build --all --local --db-reset",
+        "full-reset-nodb": "npm run clean && npm install && node build --all --local"
     },
     "type": "module",
     "author": "{@author}",
