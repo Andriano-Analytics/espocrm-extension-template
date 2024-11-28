@@ -69,7 +69,7 @@ Run:
 ```
 php init.php
 ```
-It will ask the user to enter an extension name and some other information. The `init.php` may be removed from your repository after it successfully completes. At this point, a commit may be made to store the changes to the repository.
+The script will ask the user to enter an extension name and some other information. The `init.php` file may be removed from your repository after it successfully completes. At this point, a commit may be made to store the changes to the repository.
 
 ## Configuration
 Create a file called `config.json` in the root directory. You can copy `config-default.json` and rename it to `config.json`. During the build process, the configuration files will be merged and the keys in `config-default.json` will be overridden by `config.json`, if applicable.
@@ -110,7 +110,7 @@ After building, EspoCRM instance with installed extension will be available at `
 ### Preparation
 1. You need to have *node*, *npm*, *composer* installed.
 2. Run `npm install`.
-3. Create a database. Use `node build --db-reset` to automatically create the database using the parameters in the configuration file.
+3. Use `node build --db-reset` to automatically create the database using the parameters in the configuration file.
 
 ### Full EspoCRM instance building
 Download the latest release of EspoCRM:
@@ -166,7 +166,7 @@ To install other extensions during the build process, follow the steps below:
 ```php
 <?php
 return [
-    'version' => '6.2.0',
+    'version' => '9.0.0',
 ];
 
 ```
@@ -204,7 +204,6 @@ You can block out new entity types right in Espo (using Entity Manager) and then
 5. Clear cache in Espo.
 6. Test in Espo.
 7. Commit changes.
-8. Profit.
 
 You can remove `copy-custom.js` from the repository if you don't plan to use it future.
 
@@ -296,7 +295,7 @@ Run composer install:
 Command to run unit tests:
 
 ```
-node build --copy; site/vendor/bin/phpunit site/tests/unit/Espo/Modules/{@name}
+(node build --copy; node build --composer-install; cd site; vendor/bin/phpunit tests/unit/Espo/Modules/{@name})
 ```
 
 ### Integration
@@ -323,13 +322,23 @@ return [
 ];
 ```
 
-The file should exist before you run `node build --copy`.
-
 Command to run integration tests:
 
 ```
-(cd site && vendor/bin/phpunit tests/integration/Espo/Modules/{@name})
+(node build --copy; node build --composer-install; cd site; vendor/bin/phpunit tests/integration/Espo/Modules/{@name})
 ```
+
+### Static analysis
+
+Command to run:
+
+```
+node build --copy; node build --composer-install; site/vendor/bin/phpstan
+```
+
+If your extension contains additional PHP packages, you also need to add `site/custom/Espo/Modules/{@name}/vendor` to the *scanDirectories* section in *phpstan.neon* config.
+
+Note: You can ommit *composer-install* command if your extension does not contain PHP packages.
 
 ## Configuring IDE
 
