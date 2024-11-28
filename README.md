@@ -59,8 +59,8 @@ This repository includes two files that are meant to allow global constants to b
 
 The development scripts (for example, `BeforeInstallDevelopment.php`) automatically include the appropriate files, and the build script automatically excludes the appropriate files.
 
-## Extension Tools Pro
-Use the "Extension Tools Pro" extension to add much-needed functionality during extension development:
+## Extension Developer Tools
+Use the "Extension Developer Tools" extension to add much-needed functionality during extension development:
 * Fake Data - Quickly populate the EspoCRM instance with fake data
 * Sandbox Jobs - Create jobs to easily execute functions automatically and manually
 
@@ -159,7 +159,7 @@ The package will be created in `build/` using the version number in `package.jso
 
 Note: The original build script will not ignore the default development files.
 
-### Installing addition extensions
+### Installing additional extensions
 To install other extensions during the build process, follow the steps below:
 
 1. Add the current EspoCRM version to the `config.php`:
@@ -170,8 +170,8 @@ return [
 ];
 
 ```
-2. Create the `extensions` directory in the root directory of your repository.
-3. Put needed extensions (e.g. `my-extension-1.0.0.zip`) in this directory.
+2. Create the `extensions` directory in the root of the repository.
+3. Add extensions (e.g. `my-extension-1.0.0.zip`) to the `extensions` directory.
 
 Extensions will be installed automatically after running the command `node build --all` or `node build --install`.
 
