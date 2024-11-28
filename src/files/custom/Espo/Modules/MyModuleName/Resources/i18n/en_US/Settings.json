@@ -1,0 +1,14 @@
+{
+    "fields": {
+        "myParameter": "My Parameter"
+    },
+    "tooltips": {
+        "myParameter": "My parameter tooltip text. Markdown supported."
+    },
+    "options": {
+        "myParameter": {
+            "Option 1": "Option 1",
+            "Option 2": "Option 2"
+        }
+    }
+}

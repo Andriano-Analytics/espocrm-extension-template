@@ -1,0 +1,12 @@
+{
+    "keywords": {
+        "myPanel": "some search keyword,another search keyword"
+    },
+    "descriptions": {
+        "myDescription": "Description text."
+    },
+    "labels": {
+        "My Settings": "My Settings",
+        "My Panel": "My Panel"
+    }
+}

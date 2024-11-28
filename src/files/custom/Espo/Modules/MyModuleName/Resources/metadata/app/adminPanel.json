@@ -1,0 +1,15 @@
+{
+    "myPanel": {
+        "label": "My Panel",
+        "itemList": [
+            {
+                "url": "#Admin/mySettings",
+                "label": "My Settings",
+                "iconClass": "fas fa-cog",
+                "description": "myDescription",
+                "recordView": "{@nameHyphen}:views/admin/my-settings"
+            }
+        ],
+        "order": 101
+    }
+}

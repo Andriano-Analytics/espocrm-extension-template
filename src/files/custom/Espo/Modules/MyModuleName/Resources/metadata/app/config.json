@@ -1,0 +1,7 @@
+{
+    "params": {
+        "myParameter": {
+            "level": "admin"
+        }
+    }
+}
