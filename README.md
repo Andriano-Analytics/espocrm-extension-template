@@ -284,6 +284,15 @@ npm version major
 
 ## Tests
 
+To prepare the Espo instance:
+
+```
+node build --prepare-test
+```
+
+Fetches the instance and runs composer install. To be used for unit tests and static analysis in CI environment. Takes less time than the full installation.
+
+
 ### Unit
 
 Run composer install:
@@ -327,6 +336,8 @@ Command to run integration tests:
 ```
 (node build --copy; node build --composer-install; cd site; vendor/bin/phpunit tests/integration/Espo/Modules/{@name})
 ```
+
+Note that integration tests need a full installation.
 
 ### Static analysis
 
