@@ -295,16 +295,20 @@ Fetches the instance and runs composer install. To be used for unit tests and st
 
 ### Unit
 
-Run composer install:
+Run composer install for the site:
 
 ```
-`(cd site; composer install)`
+(cd site; composer install)
 ```
 
 Command to run unit tests:
 
 ```
 (node build --copy; node build --composer-install; cd site; vendor/bin/phpunit tests/unit/Espo/Modules/{@name})
+```
+or
+```
+npm run unit-tests
 ```
 
 ### Integration
@@ -337,6 +341,11 @@ Command to run integration tests:
 (node build --copy; node build --composer-install; cd site; vendor/bin/phpunit tests/integration/Espo/Modules/{@name})
 ```
 
+or
+```
+npm run integration-tests
+```
+
 Note that integration tests need a full installation.
 
 ### Static analysis
@@ -347,9 +356,14 @@ Command to run:
 node build --copy; node build --composer-install; site/vendor/bin/phpstan
 ```
 
+or
+```
+npm run sa
+```
+
 If your extension contains additional PHP packages, you also need to add `site/custom/Espo/Modules/{@name}/vendor` to the *scanDirectories* section in *phpstan.neon* config.
 
-Note: You can ommit *composer-install* command if your extension does not contain PHP packages.
+Note: You can omit *composer-install* command if your extension does not contain PHP packages.
 
 ## Configuring IDE
 
@@ -364,13 +378,15 @@ You need to set the following paths to be ignored in your IDE:
 
 ### File watcher
 
-You can set up a file watcher in the IDE to automatically copy and transpile files upon saving.
+To avoid running this command manually, use a file watcher in your IDE. The configuration for PhpStorm is included in this repository. See below about the file watcher.
 
 File watcher parameters for PhpStorm:
 
 * Program: `node`
 * Arguments: `build --copy-file --file=$FilePathRelativeToProjectRoot$`
 * Working Directory: `$ProjectFileDir$`
+
+Note: The File Watcher configuration for PhpStorm is included in this reposistory.
 
 ## Using ES modules
 
@@ -389,6 +405,28 @@ The initialization script in the original repository asks if you want to use ES6
         ]
     }
     ```
+
+## Javascript frontend libraries
+Install *rollup*.
+In `extension.json`, add a command that will bundle the needed library into an AMD module. Example:
+```json
+{
+    "scripts": [
+        "npx rollup node_modules/some-lib/build/esm/index.mjs --format amd --file build/assets/lib/some-lib.js --amd.id some-lib"
+    ]
+}
+```
+Add the library module path to `src/files/custom/Espo/Modules/{@name}/Resources/metadata/app/jsLibs.json`
+```json
+{
+    "some-lib": {
+        "path": "client/custom/modules/{@nameHyphen}/lib/some-lib.js"
+    }
+}
+```
+When you build, the library module will be automatically included in the needed location.
+
+Note that you may also need to create *rollup.config.js* to set some additional Rollup parameters that are not supported via CLI usage.
 
 ## License
 
